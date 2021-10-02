@@ -6,7 +6,7 @@ function init(self)
 	self.current_tile = {x = tile_x, y = tile_y}
 	self.moveable = {{}}
 
-	self.healt = 5
+	self.healt = 1
 
 	enemies[#enemies + 1] = msg.url()
 end
