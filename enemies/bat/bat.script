@@ -1,8 +1,10 @@
 local utils = require "modules.utils"
+local path = require "modules.path"
 
 function init(self)
 	local tile_x, tile_y = utils.world_to_tile(go.get_position(), 32)
 	self.current_tile = {x = tile_x, y = tile_y}
+	self.moveable = {{}}
 
 	enemies[#enemies + 1] = msg.url()
 end
@@ -36,5 +38,50 @@ function on_message(self, message_id, message, sender)
 		end
 
 		notify_next(message.player_tile)
+	elseif message_id == utils.pre_hash("cursor_over") then
+		self.moveable[1].x, self.moveable[1].y = self.current_tile.x, self.current_tile.y
+		for i = 2, 4 do
+			self.moveable[i] = {}
+			self.moveable[i].x = self.moveable[i - 1].x - 1
+			self.moveable[i].y = self.moveable[i - 1].y
+		end
+
+		self.moveable[5] = {}
+		self.moveable[5].x, self.moveable[5].y = self.current_tile.x + 1, self.current_tile.y
+		for i = 6, 7 do
+			self.moveable[i] = {}
+			self.moveable[i].x = self.moveable[i - 1].x + 1
+			self.moveable[i].y = self.moveable[i - 1].y
+		end
+
+		self.moveable[8] = {}
+		self.moveable[8].x, self.moveable[8].y = self.current_tile.x, self.current_tile.y + 1
+		for i = 9, 10 do
+			self.moveable[i] = {}
+			self.moveable[i].y = self.moveable[i - 1].y + 1
+			self.moveable[i].x = self.moveable[i - 1].x 
+		end
+
+		self.moveable[11] = {}
+		self.moveable[11].x, self.moveable[11].y = self.current_tile.x, self.current_tile.y - 1
+		for i = 12, 13 do
+			self.moveable[i] = {}
+			self.moveable[i].y = self.moveable[i - 1].y - 1
+			self.moveable[i].x = self.moveable[i - 1].x 
+		end
+
+		for i, v in ipairs(self.moveable) do
+			tilemap.set_tile("/map#map", "2", v.x, v.y, 3)
+		end
+	elseif message_id == utils.pre_hash("cursor_out") then
+		for i, v in ipairs(self.moveable) do
+			tilemap.set_tile("/map#map", "2", v.x, v.y, 4)
+		end
+
+		for i, v in ipairs(path.nears[1]) do
+            tilemap.set_tile("/map#map", "2", v.x, v.y, 2)
+		end
+
+		self.moveable = {{}}
 	end
 end

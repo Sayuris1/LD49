@@ -2,7 +2,7 @@ local M = {}
 
 M.map = {} -- A* extension map
 M.tile_map = {} -- tilemap.get_bounds
-M.nears = {} -- Walkable tiles
+M.nears = {{}, {}} -- Walkable tiles
 
 function M.map_changed(tile)
     M.map[(M.tile_map.w * (tile.y - 1)) + tile.x] = tilemap.get_tile("/map#map", "1", tile.x, tile.y)
@@ -34,15 +34,15 @@ function M.find_path(current_tile, destination_tile)
     end
 end
 
-function M.reset_underline()
-    for i, v in ipairs(M.nears) do
+function M.reset_underline(is_main)
+    for i, v in ipairs(M.nears[is_main]) do
         tilemap.set_tile("/map#map", "2", v.x, v.y, 4)
     end
 
-    M.nears = {}
+    M.nears[is_main] = {}
 end
 
-function M.underline_nears(current_tile, max_cost)
+function M.underline_nears(current_tile, max_cost, tile, is_main)
     local result, size, nears =
         astar.solve_near(current_tile.x - 1, current_tile.y - 1, max_cost)
 
@@ -52,15 +52,15 @@ function M.underline_nears(current_tile, max_cost)
             v.x = v.x + 1
             v.y = v.y + 1
 
-            M.nears[i] = v
+            M.nears[is_main][i] = v
 
-            tilemap.set_tile("/map#map", "2", v.x, v.y, 2)
+            tilemap.set_tile("/map#map", "2", v.x, v.y, tile)
         end
     end
 end
 
 function M.is_near(clicked_tile)
-    for i, v in ipairs(M.nears) do
+    for i, v in ipairs(M.nears[1]) do
         if v.x == clicked_tile.x and v.y == clicked_tile.y then
             return true
         end

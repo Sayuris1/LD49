@@ -9,7 +9,7 @@ function init(self)
 end
 
 local function check_nears(current_tile, player_tile)
-	for i, tile in ipairs(path.nears) do
+	for i, tile in ipairs(path.nears[1]) do
 		local distance = {}
 		distance.x = tile.x - player_tile.x
 		distance.y = tile.y - player_tile.y
@@ -30,16 +30,22 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == utils.pre_hash("play") then
-		pprint(self.current_tile)
-		path.underline_nears(self.current_tile, 3)
+		path.underline_nears(self.current_tile, 3, 3, 1)
 
 		if not check_nears(self.current_tile, message.player_tile) then
-			local i = math.random(#path.nears)
-			set_pos(path.nears[i])
+			local i = math.random(#path.nears[1])
+			set_pos(path.nears[1][i])
 		end
 
-		path.reset_underline()
+		path.reset_underline(1)
 
 		notify_next(message.player_tile)
+	elseif message_id == utils.pre_hash("cursor_over") then
+		path.underline_nears(self.current_tile, 3, 3, 2)
+	elseif message_id == utils.pre_hash("cursor_out") then
+		path.reset_underline(2)
+		for i, v in ipairs(path.nears[1]) do
+            tilemap.set_tile("/map#map", "2", v.x, v.y, 2)
+		end
 	end
 end
