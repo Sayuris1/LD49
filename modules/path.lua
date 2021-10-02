@@ -84,6 +84,19 @@ local function tile_to_astar()
     return map
 end
 
+function M.damage_same(current_tile)
+    local no = tilemap.get_tile("/map#map", "1", current_tile.x, current_tile.y)
+    if no == 1 then
+        tilemap.set_tile("/map#map", "1", current_tile.x, current_tile.y, 5)
+    else
+        tilemap.set_tile("/map#map", "1", current_tile.x, current_tile.y, 4)
+        M.destroyed[#M.destroyed + 1] = {x = current_tile.x, y = current_tile.y, turn = 3}
+    end
+
+    M.map = tile_to_astar()
+    astar.set_map(M.map)
+end
+
 function M.damage(current_tile, destination_tile)
     local result, size, total_cost, path =
         astar.solve(current_tile.x - 1, current_tile.y - 1, destination_tile.x - 1, destination_tile.y - 1)
@@ -102,10 +115,10 @@ function M.damage(current_tile, destination_tile)
                 M.destroyed[#M.destroyed + 1] = {x = v.x, y = v.y, turn = 3}
             end
         end
-
-        M.map = tile_to_astar()
-        astar.set_map(M.map)
     end
+
+    M.map = tile_to_astar()
+    astar.set_map(M.map)
 end
 
 function M.reset_map()

@@ -1,0 +1,29 @@
+local utils = require "modules.utils"
+local path = require "modules.path"
+
+function init(self)
+	go.property("speed", vmath.vector3(0))
+
+	timer.delay(3, false, function() go.delete() end)
+
+	local tile_x, tile_y = utils.world_to_tile(go.get_position(), 32)
+	self.current_tile = {x = tile_x, y = tile_y}
+end
+
+function update(self, dt)
+	local current_pos = go.get_position()
+	current_pos = current_pos + (self.speed * dt)
+	go.set_position(current_pos)
+
+	local tile_x, tile_y = utils.world_to_tile(current_pos, 32)
+	if not (tile_x == self.current_tile.x and tile_y == self.current_tile.y) then
+		self.current_tile = {x = tile_x, y = tile_y}
+		path.damage_same(self.current_tile)
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == utils.pre_hash("trigger_response") then
+		go.delete()
+	end
+end

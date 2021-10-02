@@ -31,11 +31,31 @@ local function check_nears(current_tile, player_tile)
 			current_tile.x = tile.x
 			set_pos(tile)
 
+			local rotation, speed
+			if distance.y < 0 then
+				rotation = vmath.quat_rotation_z(0)
+				speed = vmath.vector3(0, 500, 0)
+			else
+				rotation = vmath.quat_rotation_z(math.pi)
+				speed = vmath.vector3(0, -500, 0)
+			end
+
 			return true
 		elseif math.abs(distance.y) == 0 then
 			path.damage(current_tile, tile)
 			current_tile.y = tile.y
 			set_pos(tile)
+
+			local rotation, speed
+			if distance.x < 0 then
+				rotation = vmath.quat_rotation_z(-math.pi / 2)
+				speed = vmath.vector3(500, 0, 0)
+			else
+				rotation = vmath.quat_rotation_z(math.pi / 2)
+				speed = vmath.vector3(-500, 0, 0)
+			end
+
+			factory.create("#knife_factory", go.get_position(), rotation, {speed = speed})
 
 			return true
 		end
