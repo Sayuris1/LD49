@@ -12,6 +12,12 @@ function notify_next(player_tile)
 	else
 		msg.post("/player#script", utils.pre_hash("play"))
 	end
+
+	local is_chest = math.random(10)
+	if is_chest == 10 then
+		local pos_x, pos_y = utils.tile_to_world({x = math.random(14), y = math.random(14)}, 32)
+		factory.create("/player#chest_factory", vmath.vector3(pos_x, pos_y, 1))
+	end
 end
 
 function init(self)
@@ -32,6 +38,12 @@ function on_message(self, message_id, message, sender)
 	if message_id == utils.pre_hash("play") then
 		current_player = 0
 		path.underline_nears(self.current_tile, 4, 2, 1)
+	elseif message_id == utils.pre_hash("trigger_response") then
+		if message.other_group == utils.pre_hash("chest") then
+			self.knife = self.knife + 5
+			print(self.knife)
+			go.delete(message.other_id)
+		end
 	end
 end
 
