@@ -127,7 +127,7 @@ function M.reset_map()
 end
 
 function M.setup_astar()
-    M.tile_map.x, M.tile_map.y, M.tile_map.w, M.tile_map.h = tilemap.get_bounds("/map#map")
+    M.tile_map.x, M.tile_map.y, M.tile_map.w, M.tile_map.h = 1, 1, 14, 14
     astar.setup(M.tile_map.w, M.tile_map.h, 4, M.tile_map.w * M.tile_map.h, 8, true)
 
     M.map = tile_to_astar()
