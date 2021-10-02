@@ -47,8 +47,10 @@ function on_message(self, message_id, message, sender)
 		path.underline_nears(self.current_tile, 3, 3, 1)
 
 		if not check_nears(self.current_tile, message.player_tile) then
-			local i = math.random(#path.nears[1])
-			set_pos(path.nears[1][i])
+			if #path.nears > 0 then
+				local i = math.random(#path.nears[1])
+				set_pos(path.nears[1][i])
+			end
 		end
 
 		path.reset_underline(1)
