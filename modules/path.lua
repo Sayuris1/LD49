@@ -3,6 +3,7 @@ local M = {}
 M.map = {} -- A* extension map
 M.tile_map = {} -- tilemap.get_bounds
 M.nears = {{}, {}} -- Walkable tiles
+M.destroyed = {}
 
 function M.map_changed(tile)
     M.map[(M.tile_map.w * (tile.y - 1)) + tile.x] = tilemap.get_tile("/map#map", "1", tile.x, tile.y)
@@ -98,12 +99,18 @@ function M.damage(current_tile, destination_tile)
                 tilemap.set_tile("/map#map", "1", v.x, v.y, 5)
             else
                 tilemap.set_tile("/map#map", "1", v.x, v.y, 4)
+                M.destroyed[#M.destroyed + 1] = {x = v.x, y = v.y, turn = 3}
             end
         end
 
         M.map = tile_to_astar()
         astar.set_map(M.map)
     end
+end
+
+function M.reset_map()
+    M.map = tile_to_astar()
+    astar.set_map(M.map)
 end
 
 function M.setup_astar()
