@@ -37,7 +37,7 @@ end
 
 function M.reset_underline(is_main)
     for i, v in ipairs(M.nears[is_main]) do
-        tilemap.set_tile("/map#map", "2", v.x, v.y, 4)
+        tilemap.set_tile("/map#map", "2", v.x, v.y, 16)
     end
 
     M.nears[is_main] = {}
@@ -87,9 +87,11 @@ end
 function M.damage_same(current_tile)
     local no = tilemap.get_tile("/map#map", "1", current_tile.x, current_tile.y)
     if no == 1 then
-        tilemap.set_tile("/map#map", "1", current_tile.x, current_tile.y, 5)
-    else
+        tilemap.set_tile("/map#map", "1", current_tile.x, current_tile.y, 2)
+    elseif no == 3 then
         tilemap.set_tile("/map#map", "1", current_tile.x, current_tile.y, 4)
+    else
+        tilemap.set_tile("/map#map", "1", current_tile.x, current_tile.y, 16)
         M.destroyed[#M.destroyed + 1] = {x = current_tile.x, y = current_tile.y, turn = 3}
     end
 
@@ -109,9 +111,11 @@ function M.damage(current_tile, destination_tile)
 
             local no = tilemap.get_tile("/map#map", "1", v.x, v.y)
             if no == 1 then
-                tilemap.set_tile("/map#map", "1", v.x, v.y, 5)
-            else
+                tilemap.set_tile("/map#map", "1", v.x, v.y, 2)
+            elseif no == 3 then
                 tilemap.set_tile("/map#map", "1", v.x, v.y, 4)
+            else
+                tilemap.set_tile("/map#map", "1", v.x, v.y, 16)
                 M.destroyed[#M.destroyed + 1] = {x = v.x, y = v.y, turn = 3}
             end
         end
@@ -133,7 +137,7 @@ function M.setup_astar()
     M.map = tile_to_astar()
     astar.set_map(M.map)
 
-    local costs = {[1] = {1, 1, 1, 1}, [5] = {1, 1, 1, 1}}
+    local costs = {[1] = {1, 1, 1, 1}, [2] = {1, 1, 1, 1}, [3] = {1, 1, 1, 1}, [4] = {1, 1, 1, 1}}
 
     astar.set_costs(costs) 
 end

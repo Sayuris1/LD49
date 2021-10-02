@@ -64,7 +64,7 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == utils.pre_hash("play") then
-		path.underline_nears(self.current_tile, 3, 3, 1)
+		path.underline_nears(self.current_tile, 3, 6, 1)
 
 		if not check_nears(self.current_tile, message.player_tile) then
 			if #path.nears[1] > 0 then
@@ -99,11 +99,11 @@ function on_message(self, message_id, message, sender)
 		end
 
 	elseif message_id == utils.pre_hash("cursor_over") then
-		path.underline_nears(self.current_tile, 3, 3, 2)
+		path.underline_nears(self.current_tile, 3, 6, 2)
 	elseif message_id == utils.pre_hash("cursor_out") then
 		path.reset_underline(2)
 		for i, v in ipairs(path.nears[1]) do
-            tilemap.set_tile("/map#map", "2", v.x, v.y, 2)
+            tilemap.set_tile("/map#map", "2", v.x, v.y, 5)
 		end
 	end
 end
