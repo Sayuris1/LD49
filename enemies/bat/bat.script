@@ -1,0 +1,40 @@
+local utils = require "modules.utils"
+
+function init(self)
+	local tile_x, tile_y = utils.world_to_tile(go.get_position(), 32)
+	self.current_tile = {x = tile_x, y = tile_y}
+
+	enemies[#enemies + 1] = msg.url()
+end
+
+local function set_pos(current_tile)
+	local world_pos = {}; world_pos.x, world_pos.y = utils.tile_to_world(current_tile, 32)
+	go.set_position(vmath.vector3(world_pos.x, world_pos.y, 1))
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == utils.pre_hash("play") then
+		local distance = {}
+		distance.x = self.current_tile.x - message.player_tile.x
+		distance.y = self.current_tile.y - message.player_tile.y
+
+		if math.abs(distance.x) <= 2 and math.abs(distance.x) > 0 then
+			self.current_tile.x = self.current_tile.x - distance.x
+			set_pos(self.current_tile)
+		elseif math.abs(distance.y) <= 2 then
+			self.current_tile.y = self.current_tile.y - distance.y
+			set_pos(self.current_tile)
+		else
+			local direction = math.random(2)
+			if direction == 1 then
+				self.current_tile.x = self.current_tile.x - (3 * utils.sign(distance.x))
+				set_pos(self.current_tile)
+			else
+				self.current_tile.y = self.current_tile.y - (3 * utils.sign(distance.y))
+				set_pos(self.current_tile)
+			end
+		end
+
+		notiy_next(message.player_tile)
+	end
+end
