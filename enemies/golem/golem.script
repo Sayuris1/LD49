@@ -5,7 +5,21 @@ function init(self)
 	local tile_x, tile_y = utils.world_to_tile(go.get_position(), 32)
 	self.current_tile = {x = tile_x, y = tile_y}
 
+	self.healt = 5
+
 	enemies[#enemies + 1] = msg.url()
+end
+
+function final(self)
+	local url = msg.url()
+
+	for i, v in ipairs(enemies) do
+		if v == url then
+			table.remove(enemies, i)
+
+			return
+		end
+	end
 end
 
 local function check_nears(current_tile, player_tile)
@@ -40,6 +54,15 @@ function on_message(self, message_id, message, sender)
 		path.reset_underline(1)
 
 		notify_next(message.player_tile)
+
+	elseif message_id == utils.pre_hash("trigger_response") then
+		if message.other_group == utils.pre_hash("bullet_2") then
+			self.healt = self.healt - 1
+			if self.healt <= 0 then
+				go.delete()
+			end
+		end
+
 	elseif message_id == utils.pre_hash("cursor_over") then
 		path.underline_nears(self.current_tile, 3, 3, 2)
 	elseif message_id == utils.pre_hash("cursor_out") then
