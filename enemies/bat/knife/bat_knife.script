@@ -1,0 +1,17 @@
+local utils = require "modules.utils"
+
+function init(self)
+	go.property("speed", vmath.vector3(0))
+end
+
+function update(self, dt)
+	local current_pos = go.get_position()
+	current_pos = current_pos + (self.speed * dt)
+	go.set_position(current_pos)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == utils.pre_hash("trigger_response") then
+		go.delete()
+	end
+end
