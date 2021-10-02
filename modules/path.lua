@@ -87,20 +87,23 @@ function M.damage(current_tile, destination_tile)
     local result, size, total_cost, path =
         astar.solve(current_tile.x - 1, current_tile.y - 1, destination_tile.x - 1, destination_tile.y - 1)
 
-    for i, v in ipairs(path) do
-        v.x = v.x + 1
-        v.y = v.y + 1
+    if result == 0 then
+        path[#path] = nil
+        for i, v in ipairs(path) do
+            v.x = v.x + 1
+            v.y = v.y + 1
 
-        local no = tilemap.get_tile("/map#map", "1", v.x, v.y)
-        if no == 1 then
-            tilemap.set_tile("/map#map", "1", v.x, v.y, 5)
-        else
-            tilemap.set_tile("/map#map", "1", v.x, v.y, 4)
+            local no = tilemap.get_tile("/map#map", "1", v.x, v.y)
+            if no == 1 then
+                tilemap.set_tile("/map#map", "1", v.x, v.y, 5)
+            else
+                tilemap.set_tile("/map#map", "1", v.x, v.y, 4)
+            end
         end
-    end
 
-    M.map = tile_to_astar()
-    astar.set_map(M.map)
+        M.map = tile_to_astar()
+        astar.set_map(M.map)
+    end
 end
 
 function M.setup_astar()
