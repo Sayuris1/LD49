@@ -2,9 +2,13 @@ local utils = require "modules.utils"
 
 function init(self)
 	self.knife_node = gui.get_node("knife_text")
+
 	self.heart1 = gui.get_node("1")
 	self.heart2 = gui.get_node("2")
 	self.heart3 = gui.get_node("3")
+
+	self.score_node = gui.get_node("score")
+	self.high_node = gui.get_node("high")
 
 	self.score = 0
 	self.high_score = 0
@@ -13,7 +17,7 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == utils.pre_hash("knife") then
 		gui.set_text(self.knife_node, message[1])
-	else
+	elseif message_id == utils.pre_hash("hp") then
 		if message[1] == 5 then
 			gui.play_flipbook(self.heart3, utils.pre_hash("heart_half"))
 		elseif message[1] == 4 then
@@ -27,5 +31,15 @@ function on_message(self, message_id, message, sender)
 		elseif message[1] == 0 then
 			gui.play_flipbook(self.heart1, utils.pre_hash("heart_empty"))
 		end
+	elseif message_id == utils.pre_hash("score") then
+		self.score = self.score + message[1]
+		if self.score > self.high_score then
+			self.high_score = self.score
+			gui.set_text(self.high_node, self.high_score)
+		end
+		gui.set_text(self.score_node, self.score)
+	elseif message_id == utils.pre_hash("reset") then
+		self.score = 0
+		gui.set_text(self.score_node, self.score)
 	end
 end

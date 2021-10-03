@@ -13,6 +13,7 @@ end
 
 function final(self)
 	local url = msg.url()
+	msg.post("/ui#ui", utils.pre_hash("score"), {3})
 
 	for i, v in ipairs(enemies) do
 		if v == url then
