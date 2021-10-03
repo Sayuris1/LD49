@@ -6,10 +6,9 @@ enemies = {}
 current_player = 0
 next_wave = 5
 
-function notify_next(player_tile)
-	current_player = current_player + 1
+function notify_next()
 	if enemies[current_player] then
-		msg.post(enemies[current_player], utils.pre_hash("play"), {player_tile = player_tile})
+		msg.post(enemies[current_player], utils.pre_hash("play"))
 	else
 		msg.post("/player#script", utils.pre_hash("play"))
 	end
@@ -22,7 +21,7 @@ function notify_next(player_tile)
 
 	if next_wave == 0 then
 		local pos_x, pos_y = utils.tile_to_world({x = math.random(14), y = math.random(14)}, 32)
-		factory.create("/player#bat_factory", vmath.vector3(pos_x, pos_y, 1))
+		--factory.create("/player#bat_factory", vmath.vector3(pos_x, pos_y, 1))
 		local pos_x, pos_y = utils.tile_to_world({x = math.random(14), y = math.random(14)}, 32)
 		factory.create("/player#golem_factory", vmath.vector3(pos_x, pos_y, 1), nil, nil, vmath.vector3(1.5))
 		next_wave = 5
@@ -36,10 +35,10 @@ function init(self)
 	msg.post("@render:", "clear_color", { color = vmath.vector4(27 / 255, 38 / 225, 50 / 225, 1) } )
 
 	local tile_x, tile_y = utils.world_to_tile(go.get_position(), 32)
-	self.current_tile = {x = tile_x, y = tile_y}
+	player_tile = {x = tile_x, y = tile_y}
 
 	path.setup_astar()
-	path.underline_nears(self.current_tile, 4, 5, 1)
+	path.underline_nears(player_tile, 4, 5, 1)
 
 	self.knife = 5
 	self.spawn = 3
@@ -48,11 +47,37 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == utils.pre_hash("play") then
 		current_player = 0
-		path.underline_nears(self.current_tile, 4, 5, 1)
+		path.underline_nears(player_tile, 4, 5, 1)
 	elseif message_id == utils.pre_hash("trigger_response") then
 		if message.other_group == utils.pre_hash("chest") then
 			self.knife = self.knife + 5
 			go.delete(message.other_id)
+		end
+	end
+end
+
+local function walk(current_tile, path_table, path_index, current_index)
+	if current_index <= path_index then
+		local new_pos_x, new_pos_y = utils.tile_to_world(path_table[current_index], 32)
+		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(new_pos_x, new_pos_y, 1),
+			go.EASING_LINEAR, 0.5, 0, function() walk (current_tile, path_table, path_index, current_index + 1); end)
+
+		path.damage_same(path_table[current_index])
+	else
+		sprite.play_flipbook("#sprite", utils.pre_hash("player"))
+		path.reset_underline(1)
+
+		next_wave = next_wave - 1
+		notify_next(current_tile)
+
+		for i, v in ipairs(path.destroyed) do
+			v.turn = v.turn - 1
+			if v.turn == 0 then
+				tilemap.set_tile("/map#map", "1", v.x, v.y, 1)
+				table.remove(path.destroyed, i)
+
+				path.reset_map()
+			end
 		end
 	end
 end
@@ -65,27 +90,16 @@ function on_input(self, action_id, action)
 			local world_pos = camera.screen_to_world(nil, vmath.vector3(action.x + 16, action.y + 16, 0))
 			local clicked_tile = {}; clicked_tile.x, clicked_tile.y = utils.world_to_tile(world_pos, 32)
 			if path.is_near(clicked_tile) then
-				path.damage(self.current_tile, clicked_tile)
-				self.current_tile = clicked_tile
+				current_player = current_player + 1
 
-				local new_pos_x, new_pos_y = utils.tile_to_world(self.current_tile, 32)
-				go.set_position(vmath.vector3(new_pos_x, new_pos_y, 1))
-
-				path.reset_underline(1)
-
-				next_wave = next_wave - 1
-				notify_next(self.current_tile)
-
-				for i, v in ipairs(path.destroyed) do
-					v.turn = v.turn - 1
-					if v.turn == 0 then
-						local tile = math.random(2)
-						if tile == 2 then tile = 3 end
-						tilemap.set_tile("/map#map", "1", v.x, v.y, tile)
-						table.remove(path.destroyed, i)
-
-						path.reset_map()
-					end
+				local result, size, total_cost, path_table = path.find_path(player_tile, clicked_tile)
+				if result == 0 then
+					sprite.play_flipbook("#sprite", utils.pre_hash("pwalk"))
+					walk(player_tile, path_table, #path_table, 1)
+					player_tile = clicked_tile
+				else
+					next_wave = next_wave - 1
+					notify_next(player_tile)
 				end
 			end
 
@@ -94,13 +108,13 @@ function on_input(self, action_id, action)
 			local clicked_tile = {}; clicked_tile.x, clicked_tile.y = utils.world_to_tile(world_pos, 32)
 
 			local rotation, speed
-			if clicked_tile.x < self.current_tile.x then
+			if clicked_tile.x < player_tile.x then
 				rotation = vmath.quat_rotation_z(math.pi / 2)
 				speed = vmath.vector3(-500, 0, 0)
-			elseif clicked_tile.x > self.current_tile.x then
+			elseif clicked_tile.x > player_tile.x then
 				rotation = vmath.quat_rotation_z(-math.pi / 2)
 				speed = vmath.vector3(500, 0, 0)
-			elseif clicked_tile.y > self.current_tile.y then
+			elseif clicked_tile.y > player_tile.y then
 				rotation = vmath.quat_rotation_z(0)
 				speed = vmath.vector3(0, 500, 0)
 			else

@@ -17,10 +17,10 @@ function M.find_path(current_tile, destination_tile)
 
     if result == 0 then
         -- +1 coz array start from 0
+        table.remove(path, 1)
         for k, v in pairs(path) do
             v.x = v.x + 1
             v.y = v.y + 1
-            v.no = tilemap.get_tile("/map#map", "1", v.x, v.y)
         end
 
         return result, size, total_cost, path

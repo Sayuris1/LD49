@@ -30,9 +30,11 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == utils.pre_hash("play") then
+		current_player = current_player + 1
+
 		local distance = {}
-		distance.x = self.current_tile.x - message.player_tile.x
-		distance.y = self.current_tile.y - message.player_tile.y
+		distance.x = self.current_tile.x - player_tile.x
+		distance.y = self.current_tile.y - player_tile.y
 
 		if math.abs(distance.x) <= 2 then
 			self.current_tile.x = self.current_tile.x - distance.x

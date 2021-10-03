@@ -20,18 +20,22 @@ function final(self)
 	end
 end
 
-local function check_nears(current_tile, player_tile)
-	for i, tile in ipairs(path.nears[1]) do
-		local distance = {}
-		distance.x = tile.x - player_tile.x
-		distance.y = tile.y - player_tile.y
+local function walk(current_tile, path_table, path_index, current_index, distance)
+	if current_index <= path_index then
+		local new_pos_x, new_pos_y = utils.tile_to_world(path_table[current_index], 32)
+		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(new_pos_x, new_pos_y, 1),
+			go.EASING_LINEAR, 0.5, 0, function() walk (current_tile, path_table, path_index, current_index + 1, distance); end)
 
-		if math.abs(distance.x) == 0 then
-			path.damage(current_tile, tile)
-			current_tile.x = tile.x
-			set_pos(tile)
+		path.damage_same(path_table[current_index])
+	else
+		local rotation, speed
+		if not distance then
+			sprite.play_flipbook("#sprite", utils.pre_hash("golem"))
 
-			local rotation, speed
+			notify_next()
+
+			return
+		elseif math.abs(distance.x) == 0 then
 			if distance.y < 0 then
 				rotation = vmath.quat_rotation_z(0)
 				speed = vmath.vector3(0, 500, 0)
@@ -39,14 +43,7 @@ local function check_nears(current_tile, player_tile)
 				rotation = vmath.quat_rotation_z(math.pi)
 				speed = vmath.vector3(0, -500, 0)
 			end
-
-			return true
 		elseif math.abs(distance.y) == 0 then
-			path.damage(current_tile, tile)
-			current_tile.y = tile.y
-			set_pos(tile)
-
-			local rotation, speed
 			if distance.x < 0 then
 				rotation = vmath.quat_rotation_z(-math.pi / 2)
 				speed = vmath.vector3(500, 0, 0)
@@ -54,8 +51,82 @@ local function check_nears(current_tile, player_tile)
 				rotation = vmath.quat_rotation_z(math.pi / 2)
 				speed = vmath.vector3(-500, 0, 0)
 			end
+		end
 
-			factory.create("#knife_factory", go.get_position(), rotation, {speed = speed})
+		factory.create("#knife_factory", go.get_position(), rotation, {speed = speed})
+
+		sprite.play_flipbook("#sprite", utils.pre_hash("golem"))
+
+		notify_next()
+	end
+end
+
+local function check_nears(current_tile)
+	for i, tile in ipairs(path.nears[1]) do
+		local distance = {}
+		distance.x = tile.x - player_tile.x
+		distance.y = tile.y - player_tile.y
+
+		if math.abs(distance.x) == 0 then
+			local result, size, total_cost, path_table = path.find_path(current_tile, tile)
+			if result == 0 then
+				sprite.play_flipbook("#sprite", utils.pre_hash("gwalk"))
+				walk(current_tile, path_table, #path_table, 1, distance)
+				current_tile.x = tile.x
+			else
+				local rotation, speed
+				if math.abs(distance.x) == 0 then
+					if distance.y < 0 then
+						rotation = vmath.quat_rotation_z(0)
+						speed = vmath.vector3(0, 500, 0)
+					else
+						rotation = vmath.quat_rotation_z(math.pi)
+						speed = vmath.vector3(0, -500, 0)
+					end
+				elseif math.abs(distance.y) == 0 then
+					if distance.x < 0 then
+						rotation = vmath.quat_rotation_z(-math.pi / 2)
+						speed = vmath.vector3(500, 0, 0)
+					else
+						rotation = vmath.quat_rotation_z(math.pi / 2)
+						speed = vmath.vector3(-500, 0, 0)
+					end
+				end
+
+				notify_next()
+			end
+
+			return true
+		elseif math.abs(distance.y) == 0 then
+			local result, size, total_cost, path_table = path.find_path(current_tile, tile)
+			if result == 0 then
+				sprite.play_flipbook("#sprite", utils.pre_hash("gwalk"))
+				walk(current_tile, path_table, #path_table, 1, distance)
+				current_tile.y = tile.y
+			else
+				local rotation, speed
+				if math.abs(distance.x) == 0 then
+					if distance.y < 0 then
+						rotation = vmath.quat_rotation_z(0)
+						speed = vmath.vector3(0, 500, 0)
+					else
+						rotation = vmath.quat_rotation_z(math.pi)
+						speed = vmath.vector3(0, -500, 0)
+					end
+				elseif math.abs(distance.y) == 0 then
+					if distance.x < 0 then
+						rotation = vmath.quat_rotation_z(-math.pi / 2)
+						speed = vmath.vector3(500, 0, 0)
+					else
+						rotation = vmath.quat_rotation_z(math.pi / 2)
+						speed = vmath.vector3(-500, 0, 0)
+					end
+				end
+
+				factory.create("#knife_factory", go.get_position(), rotation, {speed = speed})
+
+				notify_next()
+			end
 
 			return true
 		end
@@ -64,20 +135,45 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == utils.pre_hash("play") then
+		current_player = current_player + 1
 		path.underline_nears(self.current_tile, 3, 6, 1)
 
-		if not check_nears(self.current_tile, message.player_tile) then
+		if not check_nears(self.current_tile) then
 			if #path.nears[1] > 0 then
 				local i = math.random(#path.nears[1])
-				path.damage(self.current_tile, path.nears[1][i])
-				self.current_tile = path.nears[1][i]
-				set_pos(path.nears[1][i])
+				local result, size, total_cost, path_table = path.find_path(self.current_tile, path.nears[1][i])
+				if result == 0 then
+					sprite.play_flipbook("#sprite", utils.pre_hash("gwalk"))
+					walk(self.current_tile, path_table, #path_table, 1)
+					self.current_tile = path.nears[1][i]
+				else
+					local rotation, speed
+					if math.abs(distance.x) == 0 then
+						if distance.y < 0 then
+							rotation = vmath.quat_rotation_z(0)
+							speed = vmath.vector3(0, 500, 0)
+						else
+							rotation = vmath.quat_rotation_z(math.pi)
+							speed = vmath.vector3(0, -500, 0)
+						end
+					elseif math.abs(distance.y) == 0 then
+						if distance.x < 0 then
+							rotation = vmath.quat_rotation_z(-math.pi / 2)
+							speed = vmath.vector3(500, 0, 0)
+						else
+							rotation = vmath.quat_rotation_z(math.pi / 2)
+							speed = vmath.vector3(-500, 0, 0)
+						end
+					end
+
+					factory.create("#knife_factory", go.get_position(), rotation, {speed = speed})
+
+					notify_next()
+				end
 			end
 		end
 
 		path.reset_underline(1)
-
-		notify_next(message.player_tile)
 
 	elseif message_id == utils.pre_hash("trigger_response") then
 		if message.other_group == utils.pre_hash("bullet_2") then
