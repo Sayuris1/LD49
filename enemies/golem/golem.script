@@ -26,7 +26,9 @@ local function walk(current_tile, path_table, path_index, current_index, distanc
 		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(new_pos_x, new_pos_y, 1),
 			go.EASING_LINEAR, 0.5, 0, function() walk (current_tile, path_table, path_index, current_index + 1, distance); end)
 
-		path.damage_same(path_table[current_index])
+		if not (current_index == path_index) then
+			path.damage_same(path_table[current_index])
+		end
 	else
 		local rotation, speed
 		if not distance then
@@ -72,6 +74,7 @@ local function check_nears(current_tile)
 			if result == 0 then
 				sprite.play_flipbook("#sprite", utils.pre_hash("gwalk"))
 				walk(current_tile, path_table, #path_table, 1, distance)
+				path.damage_same(current_tile)
 				current_tile.x = tile.x
 			else
 				local rotation, speed
@@ -102,6 +105,7 @@ local function check_nears(current_tile)
 			if result == 0 then
 				sprite.play_flipbook("#sprite", utils.pre_hash("gwalk"))
 				walk(current_tile, path_table, #path_table, 1, distance)
+				path.damage_same(current_tile)
 				current_tile.y = tile.y
 			else
 				local rotation, speed
@@ -133,6 +137,22 @@ local function check_nears(current_tile)
 	end
 end
 
+local function set_pos(current_tile)
+	local world_pos = {}; world_pos.x, world_pos.y = utils.tile_to_world(current_tile, 32)
+	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(world_pos.x, world_pos.y, 1),
+			go.EASING_LINEAR, 0.5, 0, function ()
+				local tile_no = tilemap.get_tile("/map#map", "1", current_tile.x, current_tile.y)
+				if tile_no == 1 then
+					path.damage_same(current_tile)
+				elseif tile_no == 2 then
+					path.damage_same(current_tile)
+					sprite.play_flipbook("#sprite", utils.pre_hash("gdead"), function() go.delete(); end)
+				elseif tile_no == 0 then
+					sprite.play_flipbook("#sprite", utils.pre_hash("gdead"), function() go.delete(); end)
+				end
+			end)
+end
+
 function on_message(self, message_id, message, sender)
 	if message_id == utils.pre_hash("play") then
 		current_player = current_player + 1
@@ -145,6 +165,7 @@ function on_message(self, message_id, message, sender)
 				if result == 0 then
 					sprite.play_flipbook("#sprite", utils.pre_hash("gwalk"))
 					walk(self.current_tile, path_table, #path_table, 1)
+					path.damage_same(self.current_tile)
 					self.current_tile = path.nears[1][i]
 				else
 					notify_next()
@@ -168,9 +189,6 @@ function on_message(self, message_id, message, sender)
 			end
 
 			set_pos(self.current_tile)
-			if 4 == tilemap.get_tile("/map#map", "1", self.current_tile.x, self.current_tile.y) then
-				go.delete()
-			end
 		end
 
 	elseif message_id == utils.pre_hash("cursor_over") then

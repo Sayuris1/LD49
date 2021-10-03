@@ -91,7 +91,7 @@ function M.damage_same(current_tile)
     elseif no == 3 then
         tilemap.set_tile("/map#map", "1", current_tile.x, current_tile.y, 4)
     else
-        tilemap.set_tile("/map#map", "1", current_tile.x, current_tile.y, 16)
+        tilemap.set_tile("/map#map", "1", current_tile.x, current_tile.y, 0)
         M.destroyed[#M.destroyed + 1] = {x = current_tile.x, y = current_tile.y, turn = 3}
     end
 

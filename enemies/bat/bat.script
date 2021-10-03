@@ -90,7 +90,7 @@ function on_message(self, message_id, message, sender)
 		if message.other_group == utils.pre_hash("bullet_2") then
 			self.healt = self.healt - 1
 			if self.healt <= 0 then
-				go.delete()
+				sprite.play_flipbook("#sprite", utils.pre_hash("bdead"), function() go.delete() end)
 			end
 		end
 
