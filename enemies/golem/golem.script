@@ -147,27 +147,6 @@ function on_message(self, message_id, message, sender)
 					walk(self.current_tile, path_table, #path_table, 1)
 					self.current_tile = path.nears[1][i]
 				else
-					local rotation, speed
-					if math.abs(distance.x) == 0 then
-						if distance.y < 0 then
-							rotation = vmath.quat_rotation_z(0)
-							speed = vmath.vector3(0, 500, 0)
-						else
-							rotation = vmath.quat_rotation_z(math.pi)
-							speed = vmath.vector3(0, -500, 0)
-						end
-					elseif math.abs(distance.y) == 0 then
-						if distance.x < 0 then
-							rotation = vmath.quat_rotation_z(-math.pi / 2)
-							speed = vmath.vector3(500, 0, 0)
-						else
-							rotation = vmath.quat_rotation_z(math.pi / 2)
-							speed = vmath.vector3(-500, 0, 0)
-						end
-					end
-
-					factory.create("#knife_factory", go.get_position(), rotation, {speed = speed})
-
 					notify_next()
 				end
 			end

@@ -21,7 +21,7 @@ function notify_next()
 
 	if next_wave == 0 then
 		local pos_x, pos_y = utils.tile_to_world({x = math.random(14), y = math.random(14)}, 32)
-		--factory.create("/player#bat_factory", vmath.vector3(pos_x, pos_y, 1))
+		factory.create("/player#bat_factory", vmath.vector3(pos_x, pos_y, 1))
 		local pos_x, pos_y = utils.tile_to_world({x = math.random(14), y = math.random(14)}, 32)
 		factory.create("/player#golem_factory", vmath.vector3(pos_x, pos_y, 1), nil, nil, vmath.vector3(1.5))
 		next_wave = 5
@@ -68,7 +68,7 @@ local function walk(current_tile, path_table, path_index, current_index)
 		path.reset_underline(1)
 
 		next_wave = next_wave - 1
-		notify_next(current_tile)
+		notify_next()
 
 		for i, v in ipairs(path.destroyed) do
 			v.turn = v.turn - 1
@@ -99,7 +99,7 @@ function on_input(self, action_id, action)
 					player_tile = clicked_tile
 				else
 					next_wave = next_wave - 1
-					notify_next(player_tile)
+					notify_next()
 				end
 			end
 
