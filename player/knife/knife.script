@@ -3,7 +3,7 @@ local utils = require "modules.utils"
 function init(self)
 	go.property("speed", vmath.vector3(0))
 
-	timer.delay(3, false, function() go.delete() end)
+	timer.delay(2, false, function() go.delete() end)
 end
 
 function update(self, dt)

@@ -58,8 +58,6 @@ local function walk(current_tile, path_table, path_index, current_index, distanc
 		factory.create("#knife_factory", go.get_position(), rotation, {speed = speed})
 
 		sprite.play_flipbook("#sprite", utils.pre_hash("golem"))
-
-		notify_next()
 	end
 end
 
@@ -96,7 +94,7 @@ local function check_nears(current_tile)
 					end
 				end
 
-				notify_next()
+				factory.create("#knife_factory", go.get_position(), rotation, {speed = speed})
 			end
 
 			return true
@@ -128,8 +126,6 @@ local function check_nears(current_tile)
 				end
 
 				factory.create("#knife_factory", go.get_position(), rotation, {speed = speed})
-
-				notify_next()
 			end
 
 			return true

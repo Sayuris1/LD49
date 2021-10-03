@@ -19,13 +19,13 @@ function notify_next()
 		factory.create("/player#chest_factory", vmath.vector3(pos_x, pos_y, 1))
 	end
 
-	if next_wave == 0 then
+	--[[ if next_wave == 0 then
 		local pos_x, pos_y = utils.tile_to_world({x = math.random(14), y = math.random(14)}, 32)
 		factory.create("/player#bat_factory", vmath.vector3(pos_x, pos_y, 1))
 		local pos_x, pos_y = utils.tile_to_world({x = math.random(14), y = math.random(14)}, 32)
 		factory.create("/player#golem_factory", vmath.vector3(pos_x, pos_y, 1), nil, nil, vmath.vector3(1.5))
 		next_wave = 5
-	end
+	end ]]
 end
 
 function init(self)
@@ -43,6 +43,8 @@ function init(self)
 	self.hp = 6
 	self.knife = 5
 	self.spawn = 3
+
+	msg.post("/ui#ui", utils.pre_hash("knife"), {self.knife})
 end
 
 function on_message(self, message_id, message, sender)
@@ -52,21 +54,12 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == utils.pre_hash("trigger_response") then
 		if message.other_group == utils.pre_hash("chest") then
 			self.knife = self.knife + 5
+			msg.post("/ui#ui", utils.pre_hash("knife"), {self.knife})
 			go.delete(message.other_id)
 		elseif message.other_group == utils.pre_hash("bullet_1") then
 			self.hp = self.hp - 1
-			if self.hp == 5 then
-				sprite.play_flipbook("/heart#3", utils.pre_hash("heart_half"))
-			elseif self.hp == 4 then
-				sprite.play_flipbook("/heart#3", utils.pre_hash("heart_empty"))
-			elseif self.hp == 3 then
-				sprite.play_flipbook("/heart#2", utils.pre_hash("heart_half"))
-			elseif self.hp == 2 then
-				sprite.play_flipbook("/heart#2", utils.pre_hash("heart_empty"))
-			elseif self.hp == 1 then
-				sprite.play_flipbook("/heart#1", utils.pre_hash("heart_half"))
-			elseif self.hp == 0 then
-				sprite.play_flipbook("/heart#1", utils.pre_hash("heart_empty"))
+			msg.post("/ui#ui", utils.pre_hash("hp"), {self.hp})
+			if self.hp == 0 then
 				sprite.play_flipbook("#sprite", utils.pre_hash("pdead"), function () go.delete(); end)
 			end
 		end
@@ -119,6 +112,7 @@ function on_input(self, action_id, action)
 					player_tile = clicked_tile
 				else
 					next_wave = next_wave - 1
+					path.reset_underline(1)
 					notify_next()
 				end
 			end
@@ -143,6 +137,7 @@ function on_input(self, action_id, action)
 			end
 
 			self.knife = self.knife - 1
+			msg.post("/ui#ui", utils.pre_hash("knife"), {self.knife})
 			factory.create("#knife_factory", go.get_position(), rotation, {speed = speed})
 		end
 	end
