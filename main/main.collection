@@ -32,6 +32,46 @@ instances {
     z: 1.0
   }
 }
+instances {
+  id: "chest"
+  prototype: "/player/chest/chest.go"
+  position {
+    x: 114.0
+    y: 16.0
+    z: 3.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "chest1"
+  prototype: "/player/chest/chest.go"
+  position {
+    x: 209.0
+    y: 16.0
+    z: 3.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
 scale_along_z: 0
 embedded_instances {
   id: "map"
@@ -430,15 +470,29 @@ embedded_instances {
   "pivot: PIVOT_CENTER\\n"
   "blend_mode: BLEND_MODE_ALPHA\\n"
   "line_break: false\\n"
-  "text: \\\"Use right click to move\\\\n"
+  "text: \\\"Welcome, warrior to the dungeons of\\\\n"
   "\\\"\\n"
-  "  \\\"Go to the far right side of the arena\\\"\\n"
+  "  \\\"\\\\n"
+  "\\\"\\n"
+  "  \\\"...\\\\n"
+  "\\\"\\n"
+  "  \\\"\\\\n"
+  "\\\"\\n"
+  "  \\\"You are just a noob, aren\\\\\\\'t you?\\\\n"
+  "\\\"\\n"
+  "  \\\"Just go to the far right side of the arena.\\\\n"
+  "\\\"\\n"
+  "  \\\"\\\\n"
+  "\\\"\\n"
+  "  \\\"You don\\\\\\\'t even know how to move??\\\\n"
+  "\\\"\\n"
+  "  \\\"Use your legs! Or right click\\\"\\n"
   "font: \\\"/builtins/fonts/system_font.font\\\"\\n"
   "material: \\\"/builtins/fonts/label.material\\\"\\n"
   "\"\n"
   "  position {\n"
   "    x: 227.0\n"
-  "    y: 375.0\n"
+  "    y: 361.0\n"
   "    z: 3.0\n"
   "  }\n"
   "  rotation {\n"
@@ -468,6 +522,8 @@ embedded_instances {
 }
 embedded_instances {
   id: "tuto3"
+  children: "chest1"
+  children: "trigger2"
   data: "components {\n"
   "  id: \"map\"\n"
   "  component: \"/assets/tuto3.tilemap\"\n"
@@ -475,6 +531,74 @@ embedded_instances {
   "    x: 0.0\n"
   "    y: 0.0\n"
   "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"label\"\n"
+  "  type: \"label\"\n"
+  "  data: \"size {\\n"
+  "  x: 128.0\\n"
+  "  y: 32.0\\n"
+  "  z: 0.0\\n"
+  "  w: 0.0\\n"
+  "}\\n"
+  "scale {\\n"
+  "  x: 1.0\\n"
+  "  y: 1.0\\n"
+  "  z: 1.0\\n"
+  "  w: 0.0\\n"
+  "}\\n"
+  "color {\\n"
+  "  x: 1.0\\n"
+  "  y: 1.0\\n"
+  "  z: 1.0\\n"
+  "  w: 1.0\\n"
+  "}\\n"
+  "outline {\\n"
+  "  x: 0.0\\n"
+  "  y: 0.0\\n"
+  "  z: 0.0\\n"
+  "  w: 1.0\\n"
+  "}\\n"
+  "shadow {\\n"
+  "  x: 0.0\\n"
+  "  y: 0.0\\n"
+  "  z: 0.0\\n"
+  "  w: 1.0\\n"
+  "}\\n"
+  "leading: 1.0\\n"
+  "tracking: 0.0\\n"
+  "pivot: PIVOT_CENTER\\n"
+  "blend_mode: BLEND_MODE_ALPHA\\n"
+  "line_break: false\\n"
+  "text: \\\"Ground is unstable in this part of the dungeon.\\\\n"
+  "\\\"\\n"
+  "  \\\"Be careful, \\\\n"
+  "\\\"\\n"
+  "  \\\"There is now way you can survive a fall like that.\\\\n"
+  "\\\"\\n"
+  "  \\\"\\\\n"
+  "\\\"\\n"
+  "  \\\"Golems are powerful. You can\\\\\\\'t kill them with a knife.\\\\n"
+  "\\\"\\n"
+  "  \\\"But you can push them, they won\\\\\\\'t survive a fall either.\\\\n"
+  "\\\"\\n"
+  "  \\\"\\\\n"
+  "\\\"\\n"
+  "  \\\"Probably\\\"\\n"
+  "font: \\\"/builtins/fonts/system_font.font\\\"\\n"
+  "material: \\\"/builtins/fonts/label.material\\\"\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 227.0\n"
+  "    y: 361.0\n"
+  "    z: 3.0\n"
   "  }\n"
   "  rotation {\n"
   "    x: 0.0\n"
@@ -503,6 +627,8 @@ embedded_instances {
 }
 embedded_instances {
   id: "tuto2"
+  children: "chest"
+  children: "trigger1"
   data: "components {\n"
   "  id: \"map\"\n"
   "  component: \"/assets/tuto2.tilemap\"\n"
@@ -510,6 +636,78 @@ embedded_instances {
   "    x: 0.0\n"
   "    y: 0.0\n"
   "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"label\"\n"
+  "  type: \"label\"\n"
+  "  data: \"size {\\n"
+  "  x: 128.0\\n"
+  "  y: 32.0\\n"
+  "  z: 0.0\\n"
+  "  w: 0.0\\n"
+  "}\\n"
+  "scale {\\n"
+  "  x: 1.0\\n"
+  "  y: 1.0\\n"
+  "  z: 1.0\\n"
+  "  w: 0.0\\n"
+  "}\\n"
+  "color {\\n"
+  "  x: 1.0\\n"
+  "  y: 1.0\\n"
+  "  z: 1.0\\n"
+  "  w: 1.0\\n"
+  "}\\n"
+  "outline {\\n"
+  "  x: 0.0\\n"
+  "  y: 0.0\\n"
+  "  z: 0.0\\n"
+  "  w: 1.0\\n"
+  "}\\n"
+  "shadow {\\n"
+  "  x: 0.0\\n"
+  "  y: 0.0\\n"
+  "  z: 0.0\\n"
+  "  w: 1.0\\n"
+  "}\\n"
+  "leading: 1.0\\n"
+  "tracking: 0.0\\n"
+  "pivot: PIVOT_CENTER\\n"
+  "blend_mode: BLEND_MODE_ALPHA\\n"
+  "line_break: false\\n"
+  "text: \\\"You can beat a bat right?\\\\n"
+  "\\\"\\n"
+  "  \\\"What you don\\\\\\\'t even have a weapon ??\\\\n"
+  "\\\"\\n"
+  "  \\\"\\\\n"
+  "\\\"\\n"
+  "  \\\"Didn\\\\\\\'t nobody tell you it\\\\\\\'s dangerous to go alone!\\\\n"
+  "\\\"\\n"
+  "  \\\"Take this. Just go near the knife and take it.\\\\n"
+  "\\\"\\n"
+  "  \\\"\\\\n"
+  "\\\"\\n"
+  "  \\\"You don\\\\\\\'t even know how to use that right?\\\\n"
+  "\\\"\\n"
+  "  \\\"Just throw it. Press left click to throw.\\\\n"
+  "\\\"\\n"
+  "  \\\"\\\\n"
+  "\\\"\\n"
+  "  \\\"Then move to the next room.\\\"\\n"
+  "font: \\\"/builtins/fonts/system_font.font\\\"\\n"
+  "material: \\\"/builtins/fonts/label.material\\\"\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 227.0\n"
+  "    y: 361.0\n"
+  "    z: 0.5\n"
   "  }\n"
   "  rotation {\n"
   "    x: 0.0\n"
@@ -538,6 +736,142 @@ embedded_instances {
 }
 embedded_instances {
   id: "trigger"
+  data: "embedded_components {\n"
+  "  id: \"collisionobject\"\n"
+  "  type: \"collisionobject\"\n"
+  "  data: \"collision_shape: \\\"\\\"\\n"
+  "type: COLLISION_OBJECT_TYPE_TRIGGER\\n"
+  "mass: 0.0\\n"
+  "friction: 0.1\\n"
+  "restitution: 0.5\\n"
+  "group: \\\"trigger\\\"\\n"
+  "mask: \\\"actor\\\"\\n"
+  "embedded_collision_shape {\\n"
+  "  shapes {\\n"
+  "    shape_type: TYPE_BOX\\n"
+  "    position {\\n"
+  "      x: 436.0\\n"
+  "      y: 224.0\\n"
+  "      z: 0.0\\n"
+  "    }\\n"
+  "    rotation {\\n"
+  "      x: 0.0\\n"
+  "      y: 0.0\\n"
+  "      z: 0.0\\n"
+  "      w: 1.0\\n"
+  "    }\\n"
+  "    index: 0\\n"
+  "    count: 3\\n"
+  "  }\\n"
+  "  data: 16.0\\n"
+  "  data: 224.0\\n"
+  "  data: 10.0\\n"
+  "}\\n"
+  "linear_damping: 0.0\\n"
+  "angular_damping: 0.0\\n"
+  "locked_rotation: false\\n"
+  "bullet: false\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "trigger1"
+  data: "embedded_components {\n"
+  "  id: \"collisionobject\"\n"
+  "  type: \"collisionobject\"\n"
+  "  data: \"collision_shape: \\\"\\\"\\n"
+  "type: COLLISION_OBJECT_TYPE_TRIGGER\\n"
+  "mass: 0.0\\n"
+  "friction: 0.1\\n"
+  "restitution: 0.5\\n"
+  "group: \\\"trigger\\\"\\n"
+  "mask: \\\"actor\\\"\\n"
+  "embedded_collision_shape {\\n"
+  "  shapes {\\n"
+  "    shape_type: TYPE_BOX\\n"
+  "    position {\\n"
+  "      x: 436.0\\n"
+  "      y: 224.0\\n"
+  "      z: 0.0\\n"
+  "    }\\n"
+  "    rotation {\\n"
+  "      x: 0.0\\n"
+  "      y: 0.0\\n"
+  "      z: 0.0\\n"
+  "      w: 1.0\\n"
+  "    }\\n"
+  "    index: 0\\n"
+  "    count: 3\\n"
+  "  }\\n"
+  "  data: 16.0\\n"
+  "  data: 224.0\\n"
+  "  data: 10.0\\n"
+  "}\\n"
+  "linear_damping: 0.0\\n"
+  "angular_damping: 0.0\\n"
+  "locked_rotation: false\\n"
+  "bullet: false\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "trigger2"
   data: "embedded_components {\n"
   "  id: \"collisionobject\"\n"
   "  type: \"collisionobject\"\n"

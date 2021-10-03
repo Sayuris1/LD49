@@ -5,6 +5,9 @@ function init(self)
 	self.heart1 = gui.get_node("1")
 	self.heart2 = gui.get_node("2")
 	self.heart3 = gui.get_node("3")
+
+	self.score = 0
+	self.high_score = 0
 end
 
 function on_message(self, message_id, message, sender)

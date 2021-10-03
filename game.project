@@ -6,8 +6,8 @@ render = /orthographic/render/orthographic.renderc
 shared_state = 1
 
 [display]
-width = 480
-height = 480
+width = 510
+height = 510
 
 [android]
 input_method = HiddenInputField

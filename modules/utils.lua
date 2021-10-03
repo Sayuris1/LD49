@@ -23,8 +23,8 @@ function M.screen_to_tile(pos, size)
 end
 
 function M.world_to_tile(pos, size)
-    local tile_x = math.floor(pos.x / size) + 1
-    local tile_y = math.floor(pos.y  / size) + 1
+    local tile_x = math.floor(pos.x / size) + 2
+    local tile_y = math.floor(pos.y  / size) + 2
 
     return tile_x, tile_y
 end
