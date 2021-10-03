@@ -125,15 +125,15 @@ function on_message(self, message_id, message, sender)
 		end
 
 		for i, v in ipairs(self.moveable) do
-			tilemap.set_tile("/map#map", "2", v.x, v.y, 6)
+			tilemap.set_tile(path.active, "2", v.x, v.y, 6)
 		end
 	elseif message_id == utils.pre_hash("cursor_out") then
 		for i, v in ipairs(self.moveable) do
-			tilemap.set_tile("/map#map", "2", v.x, v.y, 16)
+			tilemap.set_tile(path.active, "2", v.x, v.y, 16)
 		end
 
 		for i, v in ipairs(path.nears[1]) do
-            tilemap.set_tile("/map#map", "2", v.x, v.y, 5)
+            tilemap.set_tile(path.active, "2", v.x, v.y, 5)
 		end
 
 		self.moveable = {{}}

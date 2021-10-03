@@ -5,6 +5,7 @@ local camera = require "orthographic.camera"
 enemies = {}
 current_player = 0
 next_wave = 5
+tuto = 1
 
 function notify_next()
 	if enemies[current_player] then
@@ -62,6 +63,34 @@ function on_message(self, message_id, message, sender)
 			if self.hp == 0 then
 				sprite.play_flipbook("#sprite", utils.pre_hash("pdead"), function () go.delete(); end)
 			end
+		elseif message.other_group == utils.pre_hash("trigger") then
+			if tuto == 1 then
+				tuto = tuto + 1
+				go.animate("/tuto2", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(0), go.EASING_LINEAR, 2)
+				go.animate("/tuto1", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(-480, -480, 0), go.EASING_LINEAR, 2, 0, function() go.delete("/tuto1", true); end)
+				go.animate("/player", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(16, 16, 3), go.EASING_LINEAR, 2, 0, function() 
+					path.active = "/tuto2#map"
+
+					local tile_x, tile_y = utils.world_to_tile(go.get_position(), 32)
+					player_tile = {x = tile_x, y = tile_y}
+
+					sprite.play_flipbook("#sprite", utils.pre_hash("player"))
+					path.reset_underline(1)
+
+					next_wave = next_wave - 1
+					notify_next()
+
+					for i, v in ipairs(path.destroyed) do
+						v.turn = v.turn - 1
+						if v.turn == 0 then
+							tilemap.set_tile(path.active, "1", v.x, v.y, 1)
+							table.remove(path.destroyed, i)
+
+							path.reset_map()
+						end
+					end
+				end)
+			end
 		end
 	end
 end
@@ -69,7 +98,7 @@ end
 local function walk(current_tile, path_table, path_index, current_index)
 	if current_index <= path_index then
 		local new_pos_x, new_pos_y = utils.tile_to_world(path_table[current_index], 32)
-		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(new_pos_x, new_pos_y, 1),
+		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(new_pos_x, new_pos_y, 3),
 			go.EASING_LINEAR, 0.5, 0, function() walk (current_tile, path_table, path_index, current_index + 1); end)
 
 		if current_index ~= path_index then
@@ -85,7 +114,7 @@ local function walk(current_tile, path_table, path_index, current_index)
 		for i, v in ipairs(path.destroyed) do
 			v.turn = v.turn - 1
 			if v.turn == 0 then
-				tilemap.set_tile("/map#map", "1", v.x, v.y, 1)
+				tilemap.set_tile(path.active, "1", v.x, v.y, 1)
 				table.remove(path.destroyed, i)
 
 				path.reset_map()

@@ -23,7 +23,7 @@ end
 local function walk(current_tile, path_table, path_index, current_index, distance)
 	if current_index <= path_index then
 		local new_pos_x, new_pos_y = utils.tile_to_world(path_table[current_index], 32)
-		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(new_pos_x, new_pos_y, 1),
+		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(new_pos_x, new_pos_y, 3),
 			go.EASING_LINEAR, 0.5, 0, function() walk (current_tile, path_table, path_index, current_index + 1, distance); end)
 
 		if not (current_index == path_index) then
@@ -137,7 +137,7 @@ local function set_pos(current_tile)
 	local world_pos = {}; world_pos.x, world_pos.y = utils.tile_to_world(current_tile, 32)
 	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(world_pos.x, world_pos.y, 1),
 			go.EASING_LINEAR, 0.5, 0, function ()
-				local tile_no = tilemap.get_tile("/map#map", "1", current_tile.x, current_tile.y)
+				local tile_no = tilemap.get_tile(path.active, "1", current_tile.x, current_tile.y)
 				if tile_no == 1 then
 					path.damage_same(current_tile)
 				elseif tile_no == 2 then
@@ -192,7 +192,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == utils.pre_hash("cursor_out") then
 		path.reset_underline(2)
 		for i, v in ipairs(path.nears[1]) do
-            tilemap.set_tile("/map#map", "2", v.x, v.y, 5)
+            tilemap.set_tile(path.active, "2", v.x, v.y, 5)
 		end
 	end
 end

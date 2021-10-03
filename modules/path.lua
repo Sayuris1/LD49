@@ -5,8 +5,10 @@ M.tile_map = {} -- tilemap.get_bounds
 M.nears = {{}, {}} -- Walkable tiles
 M.destroyed = {}
 
+M.active = "/tuto1#map"
+
 function M.map_changed(tile)
-    M.map[(M.tile_map.w * (tile.y - 1)) + tile.x] = tilemap.get_tile("/map#map", "1", tile.x, tile.y)
+    M.map[(M.tile_map.w * (tile.y - 1)) + tile.x] = tilemap.get_tile(M.active, "1", tile.x, tile.y)
     astar.set_map(M.map)
 end
 
@@ -37,7 +39,7 @@ end
 
 function M.reset_underline(is_main)
     for i, v in ipairs(M.nears[is_main]) do
-        tilemap.set_tile("/map#map", "2", v.x, v.y, 16)
+        tilemap.set_tile(M.active, "2", v.x, v.y, 16)
     end
 
     M.nears[is_main] = {}
@@ -55,7 +57,7 @@ function M.underline_nears(current_tile, max_cost, tile, is_main)
 
             M.nears[is_main][i] = v
 
-            tilemap.set_tile("/map#map", "2", v.x, v.y, tile)
+            tilemap.set_tile(M.active, "2", v.x, v.y, tile)
         end
     end
 end
@@ -76,7 +78,7 @@ local function tile_to_astar()
     local counter = 1
     for h = 1, M.tile_map.h do
         for w = 1, M.tile_map.w do
-            map[counter] = tilemap.get_tile("/map#map", "1", w, h)
+            map[counter] = tilemap.get_tile(M.active, "1", w, h)
             counter = counter + 1
         end
     end
@@ -85,13 +87,13 @@ local function tile_to_astar()
 end
 
 function M.damage_same(current_tile)
-    local no = tilemap.get_tile("/map#map", "1", current_tile.x, current_tile.y)
+    local no = tilemap.get_tile(M.active, "1", current_tile.x, current_tile.y)
     if no == 1 then
-        tilemap.set_tile("/map#map", "1", current_tile.x, current_tile.y, 2)
+        tilemap.set_tile(M.active, "1", current_tile.x, current_tile.y, 2)
     elseif no == 3 then
-        tilemap.set_tile("/map#map", "1", current_tile.x, current_tile.y, 4)
+        tilemap.set_tile(M.active, "1", current_tile.x, current_tile.y, 4)
     else
-        tilemap.set_tile("/map#map", "1", current_tile.x, current_tile.y, 0)
+        tilemap.set_tile(M.active, "1", current_tile.x, current_tile.y, 0)
         M.destroyed[#M.destroyed + 1] = {x = current_tile.x, y = current_tile.y, turn = 3}
     end
 
@@ -109,13 +111,13 @@ function M.damage(current_tile, destination_tile)
             v.x = v.x + 1
             v.y = v.y + 1
 
-            local no = tilemap.get_tile("/map#map", "1", v.x, v.y)
+            local no = tilemap.get_tile(M.active, "1", v.x, v.y)
             if no == 1 then
-                tilemap.set_tile("/map#map", "1", v.x, v.y, 2)
+                tilemap.set_tile(M.active, "1", v.x, v.y, 2)
             elseif no == 3 then
-                tilemap.set_tile("/map#map", "1", v.x, v.y, 4)
+                tilemap.set_tile(M.active, "1", v.x, v.y, 4)
             else
-                tilemap.set_tile("/map#map", "1", v.x, v.y, 16)
+                tilemap.set_tile(M.active, "1", v.x, v.y, 16)
                 M.destroyed[#M.destroyed + 1] = {x = v.x, y = v.y, turn = 3}
             end
         end
