@@ -2,7 +2,7 @@ local utils = require "modules.utils"
 local path = require "modules.path"
 
 function init(self)
-	go.property("speed", vmath.vector3(0))
+	go.property("speed", vmath.vector3())
 
 	timer.delay(2, false, function() go.delete() end)
 
